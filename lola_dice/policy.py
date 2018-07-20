@@ -1,7 +1,7 @@
 """A collection of policy networks."""
 import numpy as np
-import tensorflow as tf
 import sonnet as snt
+import tensorflow as tf
 
 
 class Policy(object):
@@ -21,7 +21,7 @@ class Policy(object):
         self._parents = tuple()
         if prev is not None:
             self._root = prev.root
-            self._parents = prev.parents + (prev, )
+            self._parents = prev.parents + (prev,)
         self._params = []
         self._opponents = None
 
@@ -172,7 +172,7 @@ class MLPPolicy(Policy):
                 pol_params += [pol_lin.w, pol_lin.b]
                 # Mask out unavailable actions
                 # MA: Not sure how that affects the gradients. Maybe better for
-                    #     the environment to mask out the actions?
+                #     the environment to mask out the actions?
                 mask = -9999999 * tf.ones_like(logits)
                 logits = tf.where(
                     tf.equal(self.avail_acs_ph, 1), x=logits, y=mask)
@@ -242,7 +242,7 @@ class RecurrentPolicy(Policy):
                 pol_params += [pol_lin.w, pol_lin.b]
                 # Mask out unavailable actions
                 # MA: Not sure how that affects the gradients. Maybe better for
-                    #     the environment to mask out the actions?
+                #     the environment to mask out the actions?
                 mask = -9999999 * tf.ones_like(logits)
                 logits = tf.where(
                     tf.equal(self.avail_acs_ph, 1), x=logits, y=mask)

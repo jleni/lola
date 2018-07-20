@@ -2,14 +2,14 @@
 Logging utilities.
 Copied over from: https://github.com/openai/baselines.
 """
-import os
-import sys
-import shutil
-import os.path as osp
-import json
-import time
 import datetime
+import json
+import os
+import os.path as osp
+import shutil
+import sys
 import tempfile
+import time
 
 LOG_OUTPUT_FORMATS = ['stdout', 'log', 'json']
 
@@ -19,6 +19,7 @@ WARN = 30
 ERROR = 40
 
 DISABLED = 50
+
 
 class OutputFormat(object):
     def writekvs(self, kvs):
@@ -80,6 +81,7 @@ class HumanOutputFormat(OutputFormat):
         self.file.write('\n')
         self.file.flush()
 
+
 class JSONOutputFormat(OutputFormat):
     def __init__(self, file):
         self.file = file
@@ -92,10 +94,12 @@ class JSONOutputFormat(OutputFormat):
         self.file.write(json.dumps(kvs) + '\n')
         self.file.flush()
 
+
 class TensorBoardOutputFormat(OutputFormat):
     """
     Dumps key/value pairs into TensorBoard's numeric format.
     """
+
     def __init__(self, dir):
         os.makedirs(dir, exist_ok=True)
         self.dir = dir
@@ -115,9 +119,10 @@ class TensorBoardOutputFormat(OutputFormat):
         def summary_val(k, v):
             kwargs = {'tag': k, 'simple_value': float(v)}
             return self.tf.Summary.Value(**kwargs)
+
         summary = self.tf.Summary(value=[summary_val(k, v) for k, v in kvs.items()])
         event = self.event_pb2.Event(wall_time=time.time(), summary=summary)
-        event.step = self.step # is there any reason why you'd want to specify the step?
+        event.step = self.step  # is there any reason why you'd want to specify the step?
         self.writer.WriteEvent(event)
         self.writer.Flush()
         self.step += 1
@@ -143,6 +148,7 @@ def make_output_format(format, ev_dir):
     else:
         raise ValueError('Unknown format specified: %s' % (format,))
 
+
 # ================================================================
 # API
 # ================================================================
@@ -154,12 +160,14 @@ def logkv(key, val):
     """
     Logger.CURRENT.logkv(key, val)
 
+
 def logkvs(d):
     """
     Log a dictionary of key-value pairs
     """
     for (k, v) in d.items():
         logkv(k, v)
+
 
 def dumpkvs():
     """
@@ -169,6 +177,7 @@ def dumpkvs():
                 the level argument here, don't print to stdout.
     """
     Logger.CURRENT.dumpkvs()
+
 
 def getkvs():
     return Logger.CURRENT.name2val
@@ -203,6 +212,7 @@ def set_level(level):
     """
     Logger.CURRENT.set_level(level)
 
+
 def get_dir():
     """
     Get directory that log files are being written to.
@@ -210,8 +220,10 @@ def get_dir():
     """
     return Logger.CURRENT.get_dir()
 
+
 record_tabular = logkv
 dump_tabular = dumpkvs
+
 
 # ================================================================
 # Backend
@@ -219,7 +231,7 @@ dump_tabular = dumpkvs
 
 class Logger(object):
     DEFAULT = None  # A logger with no output files. (See right below class definition)
-                    # So that you can still log to the terminal without setting up any output files
+    # So that you can still log to the terminal without setting up any output files
     CURRENT = None  # Current logger being used by the free functions above
 
     def __init__(self, dir, output_formats):
@@ -261,22 +273,25 @@ class Logger(object):
         for fmt in self.output_formats:
             fmt.writeseq(args)
 
+
 Logger.DEFAULT = Logger.CURRENT = Logger(dir=None, output_formats=[HumanOutputFormat(sys.stdout)])
 
+
 def configure(dir=None, format_strs=None):
-    assert Logger.CURRENT is Logger.DEFAULT,\
+    assert Logger.CURRENT is Logger.DEFAULT, \
         "Only call logger.configure() when it's in the default state. Try calling logger.reset() first."
     prevlogger = Logger.CURRENT
     if dir is None:
         dir = os.getenv('OPENAI_LOGDIR')
     if dir is None:
         dir = osp.join(tempfile.gettempdir(),
-            datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"))
+                       datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"))
     if format_strs is None:
         format_strs = LOG_OUTPUT_FORMATS
     output_formats = [make_output_format(f, dir) for f in format_strs]
     Logger.CURRENT = Logger(dir=dir, output_formats=output_formats)
-    log('Logging to %s'%dir)
+    log('Logging to %s' % dir)
+
 
 if os.getenv('OPENAI_LOGDIR'):
     # if OPENAI_LOGDIR is set, configure the logger on import
@@ -284,9 +299,11 @@ if os.getenv('OPENAI_LOGDIR'):
     # to a script that's getting run in a subprocess
     configure(dir=os.getenv('OPENAI_LOGDIR'))
 
+
 def reset():
     Logger.CURRENT = Logger.DEFAULT
     log('Reset logger')
+
 
 # ================================================================
 

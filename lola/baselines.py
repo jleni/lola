@@ -20,11 +20,11 @@ class NonLearner(object):
         pass
 
 
-
 class NaiveQLearner(object):
     """
     Q-learner with epsilon-greedy exploration.
     """
+
     def __init__(self, name, num_actions, num_states,
                  gamma=0.96, alpha=1e-2, decay=1e-4, eps=0.05, seed=42):
         self.name = name

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """The main scripts for running different tournaments."""
 
-import click
 import time
 
-from lola import logger
+import click
 
+from lola import logger
 from lola.envs import *
 
 
@@ -21,7 +21,6 @@ from lola.envs import *
               help="Learning rate for Adam optimizer.")
 @click.option("--gamma", type=float, default=None,
               help="Discount factor.")
-
 def main(exp_name, num_episodes, trace_length, trials, lr, gamma):
     # Sanity
     assert exp_name in {"IPD", "IMP"}, "Tournament is only for matrix games."
@@ -55,7 +54,7 @@ def main(exp_name, num_episodes, trace_length, trials, lr, gamma):
         logger.configure(dir='logs/TNT/{}/seed-{}'.format(exp_name, seed))
         start_time = time.time()
         run(env, seed)
-        end_time  = time.time()
+        end_time = time.time()
 
 
 if __name__ == '__main__':
