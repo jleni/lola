@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 """The main scripts for running different scenarios."""
 
-import click
 import time
 
-from lola import logger
+import click
 
+from lola import logger
 from lola.envs import *
 
 
@@ -23,7 +24,6 @@ from lola.envs import *
 @click.option("--grid_size", type=int, default=3,
               help="Grid size of the coin game (used only for coin game).")
 @click.option("--trials", type=int, default=2, help="Number of trials.")
-
 # Learning parameters
 @click.option("--lola/--no-lola", default=True,
               help="Add the crazy LOLA corrections to the computation.")
@@ -40,7 +40,6 @@ from lola.envs import *
               help="Number of episodes to optimize at the same time.")
 @click.option("--bs_mul", type=int, default=1,
               help="Number of episodes to optimize at the same time")
-
 # Policy parameters
 @click.option("--simple_net/--no-simple_net", default=True,
               help="Use a simple policy (only for IPD and IMP).")
@@ -52,7 +51,6 @@ from lola.envs import *
               help="Regularization parameter.")
 @click.option("--gamma", type=float, default=None,
               help="Discount factor.")
-
 def main(exp_name, num_episodes, trace_length, exact, pseudo, grid_size,
          trials, lr, lr_correction, batch_size, bs_mul, simple_net, hidden,
          num_units, reg, gamma, lola, opp_model, mem_efficient):
@@ -78,6 +76,7 @@ def main(exp_name, num_episodes, trace_length, exact, pseudo, grid_size,
     # Import the right training function
     if exact:
         assert exp_name != "CoinGame", "Can't run CoinGame with --exact."
+
         def run(env):
             from lola.train_exact import train
             train(env,
@@ -137,7 +136,8 @@ def main(exp_name, num_episodes, trace_length, exact, pseudo, grid_size,
         logger.configure(dir='logs/{}/seed-{}'.format(exp_name, seed))
         start_time = time.time()
         run(env)
-        end_time  = time.time()
+        end_time = time.time()
+
 
 if __name__ == '__main__':
     main()

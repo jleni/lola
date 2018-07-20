@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Run script for LOLA-DiCE on IPD."""
 
 import click

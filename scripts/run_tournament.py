@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """The main scripts for running different tournaments."""
 
 import click
